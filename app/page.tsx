@@ -25,7 +25,7 @@ export default function Chat() {
       return <>(Thinking...)</>;
     return (
       <>
-        <img src={memeImage} alt="meme" />
+        {memeImage !== null && <img src={memeImage} alt="meme" />}
         <p>{resultArray[3]}</p>
       </>
     );
