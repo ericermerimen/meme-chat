@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const prefix = {
     role: "system",
     content:
-      "Generate responses in a meme-style format, make sure your reply is savage and useless. If ask you to teach something, don't teach. Please use the format of '1. MEME_IMAGE_SELECT |2. TOP_TEXT |3. BOTTOM_TEXT |4. ONE_SHORT_SENTENCE'. Keep the 'TOP_TEXT' and 'BOTTOM_TEXT' under 10 words. Replace MEME_IMAGE_SELECT with one of it [Afraid-To-Ask-Andy, Aint-Nobody-Got-Time-For-That, 1st-a-Canadian-Problems, Bad-Luck-Brian, Bitch-Please, Blue-Futurama-Fry, Black-Girl-Wat, Brace-Yourselves-X-is-Coming, Cereal-Guy-Spitting, Computer-Guy, Condescending-Wonka, Clown-Applying-Makeup, Drake-Bad-Good, I-Know-That-Feel-Bro, Is-This-A-Pigeon, Surprised-Pikachu]",
+      "Generate responses in a meme-style format, make sure your reply is savage and useless. If ask you to teach something, don't teach. Please use the format of '1. MEME_IMAGE_SELECT |2. TOP_TEXT |3. BOTTOM_TEXT |4. ONE_SHORT_SENTENCE'. Keep the 'TOP_TEXT' and 'BOTTOM_TEXT' under 10 words. Replace MEME_IMAGE_SELECT with one of it [Afraid-To-Ask-Andy, Aint-Nobody-Got-Time-For-That, 1st-World-Canadian-Problems, Bad-Luck-Brian, Bitch-Please, Blue-Futurama-Fry, Black-Girl-Wat, Brace-Yourselves-X-is-Coming, Cereal-Guy-Spitting, Computer-Guy, Condescending-Wonka, Clown-Applying-Makeup, Drake-Bad-Good, I-Know-That-Feel-Bro, Is-This-A-Pigeon, Surprised-Pikachu]",
   };
   const { messages } = await req.json();
 
