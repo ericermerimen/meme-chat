@@ -2,48 +2,20 @@
 
 import { Message } from 'ai/react';
 import { useChat } from 'ai/react';
-import { ChatRequest, FunctionCallHandler, nanoid } from 'ai';
 
 export default function Chat() {
-  const functionCallHandler: FunctionCallHandler = async (
-    chatMessages,
-    functionCall,
-  ) => {
-    if (functionCall.name === 'eval_code_in_browser') {
-      if (functionCall.arguments) {
-        // Parsing here does not always work since it seems that some characters in generated code aren't escaped properly.
-        const parsedFunctionCallArguments: { code: string } = JSON.parse(
-          functionCall.arguments,
-        );
-        // WARNING: Do NOT do this in real-world applications!
-        eval(parsedFunctionCallArguments.code);
-        const functionResponse = {
-          messages: [
-            ...chatMessages,
-            {
-              id: nanoid(),
-              name: 'eval_code_in_browser',
-              role: 'function' as const,
-              content: parsedFunctionCallArguments.code,
-            },
-          ],
-        };
-        return functionResponse;
-      }
-    }
-  };
-
   const { messages, input, handleInputChange, handleSubmit, data } = useChat({
     api: '/api/chat-with-functions',
-    experimental_onFunctionCall: functionCallHandler,
   });
 
   // Generate a map of message role to text color
   const roleToColorMap: Record<Message['role'], string> = {
     system: 'red',
     user: 'black',
+    tool: 'blue',
     function: 'blue',
     assistant: 'green',
+    data: 'purple',
   };
 
   return (
@@ -56,7 +28,7 @@ export default function Chat() {
               style={{ color: roleToColorMap[m.role] }}
             >
               <strong>{`${m.role}: `}</strong>
-              {m.content || JSON.stringify(m.function_call)}
+              {m.content || (m.toolInvocations ? JSON.stringify(m.toolInvocations) : '')}
               <br />
               <br />
             </div>
