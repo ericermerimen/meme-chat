@@ -1,5 +1,5 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText, tool } from 'ai';
+import { streamText, tool, stepCountIs } from 'ai';
 import { z } from 'zod';
 
 // IMPORTANT! Set the runtime to edge
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
         // No execute - handled client-side
       }),
     },
-    maxSteps: 5,
+    stopWhen: stepCountIs(5),
     onFinish({ text }) {
       console.log('completion', text);
     },
