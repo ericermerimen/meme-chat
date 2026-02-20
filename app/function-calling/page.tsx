@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, sendMessage } = useChat({
     api: '/api/chat-with-functions',
     onToolCall: async ({ toolCall }) => {
       if (toolCall.toolName === 'eval_code_in_browser') {
@@ -13,6 +14,7 @@ export default function Chat() {
       }
     },
   });
+  const [input, setInput] = useState('');
 
   const roleToColorMap: Record<string, string> = {
     system: 'red',
@@ -37,12 +39,20 @@ export default function Chat() {
           ))
         : null}
       <div id="chart-goes-here"></div>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (input.trim()) {
+            sendMessage({ content: input });
+            setInput('');
+          }
+        }}
+      >
         <input
           className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
           value={input}
           placeholder="Say something..."
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
         />
       </form>
     </div>

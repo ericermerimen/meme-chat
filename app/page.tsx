@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import loading0 from "./images/loading-0.gif";
 import loading1 from "./images/loading-1.gif";
@@ -9,7 +10,8 @@ import loading4 from "./images/loading-4.gif";
 import mainpic from "./images/mainpic.jpg";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, data } = useChat();
+  const { messages, sendMessage } = useChat();
+  const [input, setInput] = useState("");
   // console.log("messages", messages);
   function mutateAssistantResponse(inputString: string) {
     // console.log(inputString);
@@ -103,12 +105,20 @@ export default function Chat() {
           ))
         : null}
 
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (input.trim()) {
+            sendMessage({ content: input });
+            setInput("");
+          }
+        }}
+      >
         <input
           className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
           value={input}
           placeholder="Wussup bro?"
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           // minLength={12}
         />
       </form>
