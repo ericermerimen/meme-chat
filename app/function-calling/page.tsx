@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 
 export default function Chat() {
   const { messages, sendMessage } = useChat({
-    api: '/api/chat-with-functions',
+    transport: new DefaultChatTransport({ api: '/api/chat-with-functions' }),
     onToolCall: async ({ toolCall }) => {
       if (toolCall.toolName === 'eval_code_in_browser') {
         const args = toolCall.args as { code: string };
