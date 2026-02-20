@@ -47,7 +47,7 @@ export default function Chat() {
         onSubmit={(e) => {
           e.preventDefault();
           if (input.trim()) {
-            sendMessage({ content: input });
+            sendMessage({ text: input });
             setInput('');
           }
         }}
