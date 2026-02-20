@@ -1,62 +1,36 @@
 'use client';
 
-import { Message } from 'ai/react';
-import { useChat } from 'ai/react';
-import { ChatRequest, FunctionCallHandler, nanoid } from 'ai';
+import { useChat } from '@ai-sdk/react';
 
 export default function Chat() {
-  const functionCallHandler: FunctionCallHandler = async (
-    chatMessages,
-    functionCall,
-  ) => {
-    if (functionCall.name === 'eval_code_in_browser') {
-      if (functionCall.arguments) {
-        // Parsing here does not always work since it seems that some characters in generated code aren't escaped properly.
-        const parsedFunctionCallArguments: { code: string } = JSON.parse(
-          functionCall.arguments,
-        );
-        // WARNING: Do NOT do this in real-world applications!
-        eval(parsedFunctionCallArguments.code);
-        const functionResponse = {
-          messages: [
-            ...chatMessages,
-            {
-              id: nanoid(),
-              name: 'eval_code_in_browser',
-              role: 'function' as const,
-              content: parsedFunctionCallArguments.code,
-            },
-          ],
-        };
-        return functionResponse;
-      }
-    }
-  };
-
-  const { messages, input, handleInputChange, handleSubmit, data } = useChat({
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: '/api/chat-with-functions',
-    experimental_onFunctionCall: functionCallHandler,
+    onToolCall: async ({ toolCall }) => {
+      if (toolCall.toolName === 'eval_code_in_browser') {
+        const args = toolCall.args as { code: string };
+        // WARNING: Do NOT do this in real-world applications!
+        return eval(args.code);
+      }
+    },
   });
 
-  // Generate a map of message role to text color
-  const roleToColorMap: Record<Message['role'], string> = {
+  const roleToColorMap: Record<string, string> = {
     system: 'red',
     user: 'black',
-    function: 'blue',
     assistant: 'green',
   };
 
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       {messages.length > 0
-        ? messages.map((m: Message) => (
+        ? messages.map((m) => (
             <div
               key={m.id}
               className="whitespace-pre-wrap"
-              style={{ color: roleToColorMap[m.role] }}
+              style={{ color: roleToColorMap[m.role] ?? 'black' }}
             >
               <strong>{`${m.role}: `}</strong>
-              {m.content || JSON.stringify(m.function_call)}
+              {m.content}
               <br />
               <br />
             </div>

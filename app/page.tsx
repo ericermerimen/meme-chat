@@ -1,6 +1,6 @@
 "use client";
 
-import { useChat } from "ai/react";
+import { useChat } from "@ai-sdk/react";
 import loading0 from "./images/loading-0.gif";
 import loading1 from "./images/loading-1.gif";
 import loading2 from "./images/loading-2.gif";
