@@ -1,18 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: '/api/chat-with-functions',
+  const { messages, sendMessage } = useChat({
+    transport: new DefaultChatTransport({ api: '/api/chat-with-functions' }),
     onToolCall: async ({ toolCall }) => {
       if (toolCall.toolName === 'eval_code_in_browser') {
-        const args = toolCall.args as { code: string };
+        const args = toolCall.input as { code: string };
         // WARNING: Do NOT do this in real-world applications!
         return eval(args.code);
       }
     },
   });
+  const [input, setInput] = useState('');
 
   const roleToColorMap: Record<string, string> = {
     system: 'red',
@@ -30,19 +33,30 @@ export default function Chat() {
               style={{ color: roleToColorMap[m.role] ?? 'black' }}
             >
               <strong>{`${m.role}: `}</strong>
-              {m.content}
+              {m.parts
+                .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+                .map(p => p.text)
+                .join('')}
               <br />
               <br />
             </div>
           ))
         : null}
       <div id="chart-goes-here"></div>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (input.trim()) {
+            sendMessage({ text: input });
+            setInput('');
+          }
+        }}
+      >
         <input
           className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
           value={input}
           placeholder="Say something..."
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
         />
       </form>
     </div>

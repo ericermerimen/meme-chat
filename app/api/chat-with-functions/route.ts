@@ -1,5 +1,5 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText, tool } from 'ai';
+import { streamText, tool, stepCountIs } from 'ai';
 import { z } from 'zod';
 
 // IMPORTANT! Set the runtime to edge
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     tools: {
       get_current_weather: tool({
         description: 'Get the current weather.',
-        parameters: z.object({
+        inputSchema: z.object({
           format: z
             .enum(['celsius', 'fahrenheit'])
             .describe('The temperature unit to use.'),
@@ -28,17 +28,17 @@ export async function POST(req: Request) {
         description: `Execute javascript code in the browser with eval(). Do not use backticks in your response.
            DO NOT include any newlines in your response, and be sure to provide only valid JSON when providing the arguments object.
            The output of the eval() will be returned directly by the function.`,
-        parameters: z.object({
+        inputSchema: z.object({
           code: z.string(),
         }),
         // No execute - handled client-side
       }),
     },
-    maxSteps: 5,
+    stopWhen: stepCountIs(5),
     onFinish({ text }) {
       console.log('completion', text);
     },
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 }
