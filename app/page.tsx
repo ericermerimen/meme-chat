@@ -99,8 +99,16 @@ export default function Chat() {
                 {m.role === "user" ? "You: " : "Not You: "}
               </span>
               {m.role === "assistant"
-                ? mutateAssistantResponse(m.content)
-                : m.content}
+                ? mutateAssistantResponse(
+                    m.parts
+                      .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+                      .map(p => p.text)
+                      .join('')
+                  )
+                : m.parts
+                    .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+                    .map(p => p.text)
+                    .join('')}
             </div>
           ))
         : null}

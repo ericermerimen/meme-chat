@@ -33,7 +33,10 @@ export default function Chat() {
               style={{ color: roleToColorMap[m.role] ?? 'black' }}
             >
               <strong>{`${m.role}: `}</strong>
-              {m.content}
+              {m.parts
+                .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+                .map(p => p.text)
+                .join('')}
               <br />
               <br />
             </div>
