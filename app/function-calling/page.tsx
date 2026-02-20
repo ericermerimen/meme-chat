@@ -9,7 +9,7 @@ export default function Chat() {
     transport: new DefaultChatTransport({ api: '/api/chat-with-functions' }),
     onToolCall: async ({ toolCall }) => {
       if (toolCall.toolName === 'eval_code_in_browser') {
-        const args = toolCall.args as { code: string };
+        const args = toolCall.input as { code: string };
         // WARNING: Do NOT do this in real-world applications!
         return eval(args.code);
       }
