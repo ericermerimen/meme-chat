@@ -1,7 +1,17 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = localFont({
+  src: [
+    {
+      path: "../node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  fallback: ["system-ui", "Arial", "sans-serif"],
+  display: "swap",
+});
 
 export const metadata = {
   title: "Meme Chat",
